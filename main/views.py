@@ -13,3 +13,4 @@ def categories_list(request):
 def brands_list(request):
     data = Brand.objects.all()
     return render(request, 'brands.html', {"data": data})
+

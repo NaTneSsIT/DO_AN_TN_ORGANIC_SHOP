@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 
 
 class Banner(models.Model):
@@ -10,6 +11,8 @@ class Category(models.Model):
     category_name = models.CharField(max_length=255)
     image = models.ImageField(upload_to="cat_imgs/")
 
+    def image_tag(self):
+        return mark_safe(f'<img src={self.image.url} width="50px" height="50px" />')
     def __str__(self):
         return self.category_name
 
@@ -17,6 +20,9 @@ class Category(models.Model):
 class Brand(models.Model):
     brand_name = models.CharField(max_length=255)
     image = models.ImageField(upload_to="brand_imgs/")
+
+    def image_tag(self):
+        return mark_safe(f'<img src={self.image.url} width="50px" height="50px" />')
 
     def __str__(self):
         return self.brand_name
