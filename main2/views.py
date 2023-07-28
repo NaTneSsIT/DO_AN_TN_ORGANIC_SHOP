@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Category, Brand, Product, Size
+from .models import Category, Brand, Product, Size, ProductAttribute
 
 
 # Create your views here.
@@ -32,7 +32,34 @@ def category_product_list(request, cate_id):
     data = Product.objects.filter(category=cate)
     return render(request, 'category_product_list.html', {"data": data, "cate": cate})
 
+
 def brand_product_list(request, brand_id):
     bra = Brand.objects.get(id=brand_id)
     data = Product.objects.filter(brand=bra)
     return render(request, 'brand_product_list.html', {"data": data, "bra": bra})
+
+
+def product_detail(request, slug, id):
+    product = Product.objects.get(id=id)
+    related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
+    sizes = ProductAttribute.objects.filter(product=product).values('size_id', 'size__size_name', 'price').distinct()
+    # reviewForm = ReviewAdd()
+    #
+    # # Check
+    # canAdd = True
+    # reviewCheck = ProductReview.objects.filter(user=request.user, product=product).count()
+    # if request.user.is_authenticated:
+    #     if reviewCheck > 0:
+    #         canAdd = False
+    # # End
+    #
+    # # Fetch reviews
+    # reviews = ProductReview.objects.filter(product=product)
+    # # End
+    #
+    # # Fetch avg rating for reviews
+    # avg_reviews = ProductReview.objects.filter(product=product).aggregate(avg_rating=Avg('review_rating'))
+    # # End
+
+    return render(request, 'product_detail.html',
+                  {'data': product, 'related': related_products, 'sizes': sizes})
