@@ -41,12 +41,10 @@ class Product(models.Model):
     slug = models.CharField(max_length=255)
     sku = models.CharField(max_length=255)
     description = models.TextField()
-    specs = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
     status = models.BooleanField(default=True)
-
+    is_special = models.BooleanField(default=False)
     def __str__(self):
         return self.product_name
 

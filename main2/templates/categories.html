@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="container my-4">
+	<!-- Featured Products -->
+	<h3 class="my-4 border-bottom pb-1">Categories</h3>
+	<div class="row">
+        {% if data %}
+            {% for cate in data %}
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                      <a href="/categories-products-list/{{ cate.id }}"><img src="/media/{{ cate.image }}" width="250" height="250" class="card-img-top" alt="{{ cate.category_name }}"></a>
+                      <div class="card-body">
+                        <h6 class="card-text"><a href="/categories-products-list/{{ cate.id }}">{{ cate.category_name }} </a></h6>
+                      </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+	</div>
+</main>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="container my-4">
+	<div class="row">
+		<!-- Filters -->
+		<div class="col-md-3">
+			<h3 class="mb-4 border-bottom pb-1">Filters</h3>
+			<!-- Filter 1 -->
+			<!-- Filter 2 -->
+			<div class="card mb-4">
+				<h6 class="card-header">Categories</h6>
+				<div class="list-group list-group-flush">
+                    {% for cate in cate_data %}
+					<li class="list-group-item">
+						<input type="checkbox" value="{{ cate.id }}"/>&nbsp;
+                        {{ cate.category_name }}
+					</li>
+                    {% endfor %}
+				</div>
+			</div>
+			<!-- Filter 3 -->
+			<div class="card mb-4">
+				<h6 class="card-header">Brands</h6>
+				<div class="list-group list-group-flush">
+					{% for brand in brand_data %}
+					<li class="list-group-item">
+						<input type="checkbox" value="{{ brand.id }}"/>&nbsp;
+                        {{ brand.brand_name }}
+					</li>
+                    {% endfor %}
+				</div>
+			</div>
+			<!-- Filter 3 -->
+			<div class="card mb-4">
+				<h6 class="card-header">Sizes</h6>
+				<div class="list-group list-group-flush">
+					{% for size in size_data %}
+					<li class="list-group-item">
+						<input type="checkbox" value="{{ size.id }}"/>&nbsp;
+                        {{ size.size_name }}
+					</li>
+                    {% endfor %}
+				</div>
+
+			</div>
+		</div>
+		<div class="col-md-9">
+			<!-- Products -->
+        {% if cate %}
+			<h3 class="mb-4 border-bottom pb-1">
+				Products in {{ cate.category_name }}
+			</h3>
+        {% endif %}
+			<div class="row">
+				{% for product in data %}
+				<div class="col-md-4 mb-4">
+					<div class="card shadow">
+					  <a href="#"><img src="/media/{{ product.image }}" width="250" height="250" class="card-img-top" alt="{{ product.product_name }}"></a>
+					  <div class="card-body">
+					    <h6 class="card-text"><a href="#">{{ product.product_name }} </a></h6>
+					  </div>
+					  <div class="card-footer">
+					  	<button class="btn btn-sm btn-primary"><i class="fa fa-shopping-cart"></i></button>
+					  	<button class="btn btn-sm btn-danger"><i class="fa fa-heart"></i></button>
+					  	<span class="float-right">
+					  		4.5/5
+					  		<i class="fa fa-star text-warning"></i>
+					  	</span>
+					  </div>
+					</div>
+
+				</div>
+				{% endfor %}
+			</div>
+                </div>
+			<p class="my-4 text-center"><a href="/products.php" class="btn btn-dark btn-sm">Load More <i class="fa fa-sync"></i></a></p>
+		</div>
+	</div>
+</div>
+</main>
+{% endblock %}
