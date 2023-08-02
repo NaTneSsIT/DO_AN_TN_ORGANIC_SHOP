@@ -30,44 +30,49 @@ $(document).ready(function(){
 	});
 
 	// Product Variation
-	$(".choose-size").hide();
-
+	// $(".choose_size2").hide();
+	// $(".choose-size").show();
+	// const asd = $(".choose-size")
+	// console.log(asd)
 	// Show size according to selected color
-	$(".choose-color").on('click',function(){
-		$(".choose-size").removeClass('active');
-		$(".choose-color").removeClass('focused');
-		$(this).addClass('focused');
-
-		var _color=$(this).attr('data-color');
-
-		$(".choose-size").hide();
-		$(".color"+_color).show();
-		$(".color"+_color).first().addClass('active');
-
-		var _price=$(".color"+_color).first().attr('data-price');
-		$(".product-price").text(_price);
-
-	});
+	// $(".choose-color").on('click',function(){
+	// 	$(".choose-size").removeClass('active');
+	// 	// $(".choose-color").removeClass('focused');
+	// 	$(this).addClass('focused');
+	//
+	// 	// var _color=$(this).attr('data-color');
+	// 	//
+	// 	// $(".choose-size").hide();
+	// 	// $(".color"+_color).show();
+	// 	// $(".color"+_color).first().addClass('active');
+	//
+	// 	var _price=$(".color"+_color).first().attr('data-price');
+	// 	$(".product-price").text(_price);
+	//
+	// });
 	// End
 
 	// Show the price according to selected size
-	$(".choose-size").on('click',function(){
-		$(".choose-size").removeClass('active');
+	$(".choose_size2").on('click',function(){
+		$(".choose-size2").removeClass('active');
 		$(this).addClass('active');
-
+		var _index=$(this).attr('data-index');
+		console.log('_index')
 		var _price=$(this).attr('data-price');
-		$(".product-price").text(_price);
+		console.log("price", _price)
+		$(".product-price-"+_index).text(_price);
 	})
+
 	// End
 
 	// Show the first selected color
-	$(".choose-color").first().addClass('focused');
-	var _color=$(".choose-color").first().attr('data-color');
-	var _price=$(".choose-size").first().attr('data-price');
-
-	$(".color"+_color).show();
-	$(".color"+_color).first().addClass('active');
-	$(".product-price").text(_price);
+	// $(".choose-color").first().addClass('focused');
+	// var _color=$(".choose-color").first().attr('data-color');
+	// var _price=$(".choose-size").first().attr('data-price');
+	//
+	// $(".color"+_color).show();
+	// $(".color"+_color).first().addClass('active');
+	// $(".product-price").text(_price);
 
 	// Add to cart
 	$(document).on('click',".add-to-cart",function(){

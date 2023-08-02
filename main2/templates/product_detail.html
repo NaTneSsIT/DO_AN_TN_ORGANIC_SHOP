@@ -7,7 +7,7 @@
 	<div class="row">
 		<!-- Images -->
 		<div class="col-md-4">
-			<img id="zoom_01" data-zoom-image="/media/{{data.image}}" src="/media/{{data.image}}" class="card-img-top" alt="{{data.title}}">
+			<img id="zoom_01" data-zoom-image="/media/{{data.image}}" src="/media/{{data.image}}" class="card-img-top" alt="{{data.product_name}}">
 		</div>
 		<div class="col-md-8">
 			<p>{{data.description}}</p>
@@ -15,9 +15,9 @@
 			<table class="table table-bordered">
 				<tr>
 					<th>Sizes</th>
-					<td>
+<td>
 						{% for size in sizes %}
-						<button data-price="{{size}}" >{{size.size__size_name}}</button>
+						<button data-price="{{size.price}}" data-index="{{data.id}}" class="btn btn-outline-secondary btn-sm choose_size2 ">{{size.size__size_name}}</button>
 						{% endfor %}
 					</td>
 				</tr>
@@ -32,7 +32,7 @@
 			  <div class="input-group-append">
 			  	<input type="hidden" class="product-image-{{data.id}}" value="{{data.image}}" />
 		          <input type="hidden" class="product-id-{{data.id}}" value="{{data.id}}" />
-		          <input type="hidden" class="product-title-{{data.id}}" value="{{data.title}}" />
+		          <input type="hidden" class="product-title-{{data.id}}" value="{{data.product_name}}" />
 			    <button class="btn btn-primary btn-sm add-to-cart" data-index="{{data.id}}" type="button" id="addToCartBtn"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
 			  </div>
 			</div>

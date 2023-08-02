@@ -4,11 +4,13 @@
 <head>
 	<title>Ecommerce Bootstrap Template</title>
 	<!-- Font Awesome -->
+
 	<link rel="stylesheet" type="text/css" href="{% static 'fontawesome-free/css/all.min.css' %}" />
 	<!-- Bootstrap 4 CSS -->
 	<link rel="stylesheet" type="text/css" href="{% static 'bs4/bootstrap.min.css' %}" />
-	<!-- Main Jquery -->
-	<script type="text/javascript" src="{% static 'jquery.min.js' %}"></script>
+
+    <!-- Main Jquery -->
+    <script type="text/javascript" src="{% static 'jquery.min.js' %}"></script>
 	<!-- Bootstrap 4 JS -->
 	<script type="text/javascript" src="{% static 'bs4/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'custom.js' %}"></script>
@@ -40,7 +42,7 @@
 		        <a class="nav-link text-white" href="{% url 'brands-list' %}">Brands</a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link text-white" href="/cart.php"><i class="fa fa-shopping-cart"></i> Cart (2)</a>
+		        <a class="nav-link text-white" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i>  Cart (<span class="cart-list">{{request.session.cartdata|length}}</span>)</a>
 		      </li>
 		      <li class="nav-item">
 		        <a class="nav-link text-white" href="/account.php"><i class="fa fa-user"></i> My Account</a>
