@@ -1,15 +1,17 @@
+from django.contrib.auth import authenticate, login
 from django.db.models import Min, Max
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from .models import Category, Brand, Product, Size, ProductAttribute
+from main2.forms import SignupForm
 
 
 # Create your views here.
 def home(request):
-    pro_data = Product.objects.filter(is_special=True)
-    return render(request, 'index.html', {"data": pro_data})
+    data = Product.objects.filter(is_special=True).order_by('-id')
+    return render(request, 'index.html', {'data': data})
 
 
 def categories_list(request):
@@ -25,9 +27,6 @@ def brands_list(request):
 def products_list(request):
     total_data = Product.objects.count()
     data = Product.objects.all().order_by('-id')[:3]
-    cate_data = Category.objects.distinct().values()
-    brand_data = Brand.objects.distinct().values()
-    size_data = Size.objects.distinct().values()
     min_price = ProductAttribute.objects.aggregate(Min('price'))
     max_price = ProductAttribute.objects.aggregate(Max('price'))
     return render(request, 'products.html',
@@ -175,3 +174,17 @@ def update_cart_item(request):
                          {'cart_data': request.session['cartdata'], 'totalitems': len(request.session['cartdata']),
                           'total_amt': total_amt})
     return JsonResponse({'data': t, 'totalitems': len(request.session['cartdata'])})
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            pwd = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=pwd)
+            login(request, user)
+            return redirect('home')
+    form = SignupForm
+    return render(request, 'registration/signup.html', {'form': form})
