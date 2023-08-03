@@ -1,11 +1,17 @@
 from django.contrib.auth import authenticate, login
-from django.db.models import Min, Max
+from django.contrib.auth.decorators import login_required
+from django.db.models import Min, Max, Avg
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
-from .models import Category, Brand, Product, Size, ProductAttribute
-from main2.forms import SignupForm
+from .models import Category, Brand, Product, Size, ProductAttribute, CartOrder, CartOrderItems, UserAddressBook, \
+    ProductReview
+from main2.forms import SignupForm, ReviewAdd
+from django.urls import reverse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from paypal.standard.forms import PayPalPaymentsForm
 
 
 # Create your views here.
@@ -52,26 +58,26 @@ def product_detail(request, slug, id):
     product = Product.objects.get(id=id)
     related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
     sizes = ProductAttribute.objects.filter(product=product).values('size_id', 'size__size_name', 'price').distinct()
-    # reviewForm = ReviewAdd()
-    #
-    # # Check
-    # canAdd = True
-    # reviewCheck = ProductReview.objects.filter(user=request.user, product=product).count()
-    # if request.user.is_authenticated:
-    #     if reviewCheck > 0:
-    #         canAdd = False
-    # # End
-    #
-    # # Fetch reviews
-    # reviews = ProductReview.objects.filter(product=product)
-    # # End
-    #
-    # # Fetch avg rating for reviews
-    # avg_reviews = ProductReview.objects.filter(product=product).aggregate(avg_rating=Avg('review_rating'))
-    # # End
+    reviewForm = ReviewAdd()
+
+    # Check
+    canAdd = True
+    reviewCheck = ProductReview.objects.filter(user=request.user, product=product).count()
+    if request.user.is_authenticated:
+        if reviewCheck > 0:
+            canAdd = False
+    # End
+
+    # Fetch reviews
+    reviews = ProductReview.objects.filter(product=product)
+    # End
+
+    # Fetch avg rating for reviews
+    avg_reviews = ProductReview.objects.filter(product=product).aggregate(avg_rating=Avg('review_rating'))
+    # End
 
     return render(request, 'product_detail.html',
-                  {'data': product, 'related': related_products, 'sizes': sizes})
+                  {'data': product, 'related': related_products, 'sizes': sizes,'reviewForm':reviewForm,'canAdd':canAdd,'reviews':reviews,'avg_reviews':avg_reviews})
 
 
 def search(request):
@@ -188,3 +194,81 @@ def signup(request):
             return redirect('home')
     form = SignupForm
     return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
+def checkout(request):
+    total_amt = 0
+    totalAmt = 0
+    if 'cartdata' in request.session:
+        for p_id, item in request.session['cartdata'].items():
+            totalAmt += int(item['qty']) * float(item['price'])
+        # Order
+        order = CartOrder.objects.create(
+            user=request.user,
+            total_amt=totalAmt
+        )
+        # End
+        for p_id, item in request.session['cartdata'].items():
+            total_amt += int(item['qty']) * float(item['price'])
+            # OrderItems
+            items = CartOrderItems.objects.create(
+                order=order,
+                invoice_no='INV-' + str(order.id),
+                item=item['title'],
+                image=item['image'],
+                qty=item['qty'],
+                price=item['price'],
+                total=float(item['qty']) * float(item['price'])
+            )
+        # End
+        # Process Payment
+        host = request.get_host()
+        paypal_dict = {
+            'business': settings.PAYPAL_RECEIVER_EMAIL,
+            'amount': total_amt,
+            'item_name': 'OrderNo-' + str(order.id),
+            'invoice': 'INV-' + str(order.id),
+            'currency_code': 'USD',
+            'notify_url': 'http://{}{}'.format(host, reverse('paypal-ipn')),
+            'return_url': 'http://{}{}'.format(host, reverse('payment_done')),
+            'cancel_return': 'http://{}{}'.format(host, reverse('payment_cancelled')),
+        }
+        form = PayPalPaymentsForm(initial=paypal_dict)
+        address = UserAddressBook.objects.filter(user=request.user, status=True).first()
+        return render(request, 'checkout.html',
+                      {'cart_data': request.session['cartdata'], 'totalitems': len(request.session['cartdata']),
+                       'total_amt': total_amt, 'form': form, 'address': address})
+
+
+@csrf_exempt
+def payment_done(request):
+    returnData = request.POST
+    return render(request, 'payment-success.html', {'data': returnData})
+
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'payment-fail.html')
+
+
+def save_review(request, pid):
+    product = Product.objects.get(pk=pid)
+    user = request.user
+    review = ProductReview.objects.create(
+        user=user,
+        product=product,
+        review_text=request.POST['review_text'],
+        review_rating=request.POST['review_rating'],
+    )
+    data = {
+        'user': user.username,
+        'review_text': request.POST['review_text'],
+        'review_rating': request.POST['review_rating']
+    }
+
+    # Fetch avg rating for reviews
+    avg_reviews = ProductReview.objects.filter(product=product).aggregate(avg_rating=Avg('review_rating'))
+    # End
+
+    return JsonResponse({'bool': True, 'data': data, 'avg_reviews': avg_reviews})

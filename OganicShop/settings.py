@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "main2.apps.Main2Config"
+    "main2.apps.Main2Config",
+    "paypal.standard.ipn"
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
+PAYPAL_RECEIVER_EMAIL = 'sb-zja1726895957@personal.example.com'
+PAYPAL_TEST = True
