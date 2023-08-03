@@ -214,7 +214,7 @@ def checkout(request):
         for p_id, item in request.session['cartdata'].items():
             total_amt += int(item['qty']) * float(item['price'])
             # OrderItems
-            items = CartOrderItems.objects.create(
+            CartOrderItems.objects.create(
                 order=order,
                 invoice_no='INV-' + str(order.id),
                 item=item['title'],
@@ -229,8 +229,8 @@ def checkout(request):
         paypal_dict = {
             'business': settings.PAYPAL_RECEIVER_EMAIL,
             'amount': total_amt,
-            'item_name': 'OrderNo-' + str(order.id),
-            'invoice': 'INV-' + str(order.id),
+            'item_name': 'OrderNo-1' + str(order.id),
+            'invoice': 'INV-1' + str(order.id),
             'currency_code': 'USD',
             'notify_url': 'http://{}{}'.format(host, reverse('paypal-ipn')),
             'return_url': 'http://{}{}'.format(host, reverse('payment_done')),
@@ -238,6 +238,7 @@ def checkout(request):
         }
         form = PayPalPaymentsForm(initial=paypal_dict)
         address = UserAddressBook.objects.filter(user=request.user, status=True).first()
+        request.session['order_id'] = order.id
         return render(request, 'checkout.html',
                       {'cart_data': request.session['cartdata'], 'totalitems': len(request.session['cartdata']),
                        'total_amt': total_amt, 'form': form, 'address': address})
@@ -245,9 +246,27 @@ def checkout(request):
 
 @csrf_exempt
 def payment_done(request):
+    # total_amt = 0
+    # totalAmt = 0
+    order = request.session['order_id']
+    order = CartOrder.objects.filter(id=order).update(paid_status=True)
+    # # End
+    # for p_id, item in request.session['cartdata'].items():
+    #     total_amt += int(item['qty']) * float(item['price'])
+    #     # OrderItems
+    #     CartOrderItems.objects.create(
+    #         order=order,
+    #         invoice_no='INV-' + str(order.id),
+    #         item=item['title'],
+    #         image=item['image'],
+    #         qty=item['qty'],
+    #         price=item['price'],
+    #         total=float(item['qty']) * float(item['price'])
+    #     )
     returnData = request.POST
     user = request.user
-    return render(request, 'payment-success.html', {'data': returnData, 'user': user})
+
+    return render(request, 'payment-success.html', {'data': returnData, 'user': user, 'order': order})
 
 
 @csrf_exempt
