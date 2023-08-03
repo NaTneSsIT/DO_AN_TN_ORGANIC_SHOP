@@ -23,9 +23,9 @@
 					<tbody>
 						{% for review in reviews %}
 						<tr>
-							<td><a href="/product/{{review.product.slug}}/{{review.product.id}}">{{review.product.title}}</a></td>
+							<td><a href="/product/{{review.product.slug}}/{{review.product.id}}">{{review.product.product_name}}</a></td>
 							<td>
-								<img width="100" src="/media/{{review.product.productattribute_set.first.image}}" alt="{{review.product.title}}">
+								<img width="100" src="/media/{{review.product.image}}" alt="{{review.product.product_name}}">
 							</td>
 							<td>{{review.product.productattribute_set.first.price}}</td>
 							<td>{{review.review_text}}</td>

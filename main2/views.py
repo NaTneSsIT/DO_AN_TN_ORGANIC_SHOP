@@ -1,13 +1,14 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.db.models import Min, Max, Avg
+from django.db.models import Min, Max, Avg, Count
+from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from .models import Category, Brand, Product, Size, ProductAttribute, CartOrder, CartOrderItems, UserAddressBook, \
-    ProductReview
-from main2.forms import SignupForm, ReviewAdd
+    ProductReview, Wishlist
+from main2.forms import SignupForm, ReviewAdd, ProfileForm, AddressBookForm
 from django.urls import reverse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -77,7 +78,8 @@ def product_detail(request, slug, id):
     # End
 
     return render(request, 'product_detail.html',
-                  {'data': product, 'related': related_products, 'sizes': sizes,'reviewForm':reviewForm,'canAdd':canAdd,'reviews':reviews,'avg_reviews':avg_reviews})
+                  {'data': product, 'related': related_products, 'sizes': sizes, 'reviewForm': reviewForm,
+                   'canAdd': canAdd, 'reviews': reviews, 'avg_reviews': avg_reviews})
 
 
 def search(request):
@@ -106,7 +108,7 @@ def filter_data(request):
 
 
 def load_more_data(request):
-    offset = int(request.GET['offset'])
+    offset = int(request.GET['offset']) + 3
     limit = int(request.GET['limit'])
     data = Product.objects.all().order_by('-id')[offset:offset + limit]
     t = render_to_string('ajax/product-list.html', {'data': data})
@@ -244,7 +246,8 @@ def checkout(request):
 @csrf_exempt
 def payment_done(request):
     returnData = request.POST
-    return render(request, 'payment-success.html', {'data': returnData})
+    user = request.user
+    return render(request, 'payment-success.html', {'data': returnData, 'user': user})
 
 
 @csrf_exempt
@@ -272,3 +275,120 @@ def save_review(request, pid):
     # End
 
     return JsonResponse({'bool': True, 'data': data, 'avg_reviews': avg_reviews})
+
+
+import calendar
+
+
+def my_dashboard(request):
+    orders = CartOrder.objects.annotate(month=ExtractMonth('order_dt')).values('month').annotate(
+        count=Count('id')).values('month', 'count')
+    monthNumber = []
+    totalOrders = []
+    for d in orders:
+        monthNumber.append(calendar.month_name[d['month']])
+        totalOrders.append(d['count'])
+    return render(request, 'user/dashboard.html', {'monthNumber': monthNumber, 'totalOrders': totalOrders})
+
+
+# My Orders
+def my_orders(request):
+    orders = CartOrder.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'user/orders.html', {'orders': orders})
+
+
+# Order Detail
+def my_order_items(request, id):
+    order = CartOrder.objects.get(pk=id)
+    orderitems = CartOrderItems.objects.filter(order=order).order_by('-id')
+    return render(request, 'user/order-items.html', {'orderitems': orderitems})
+
+
+def my_wishlist(request):
+    wlist = Wishlist.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'user/wishlist.html', {'wlist': wlist})
+
+
+# My Reviews
+def my_reviews(request):
+    reviews = ProductReview.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'user/reviews.html', {'reviews': reviews})
+
+
+# My AddressBook
+def my_addressbook(request):
+    addbook = UserAddressBook.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'user/addressbook.html', {'addbook': addbook})
+
+
+# Save addressbook
+def save_address(request):
+    msg = None
+    if request.method == 'POST':
+        form = AddressBookForm(request.POST)
+        if form.is_valid():
+            saveForm = form.save(commit=False)
+            saveForm.user = request.user
+            if 'status' in request.POST:
+                UserAddressBook.objects.update(status=False)
+            saveForm.save()
+            msg = 'Data has been saved'
+    form = AddressBookForm
+    return render(request, 'user/add-address.html', {'form': form, 'msg': msg})
+
+
+# Activate address
+def activate_address(request):
+    a_id = str(request.GET['id'])
+    UserAddressBook.objects.update(status=False)
+    UserAddressBook.objects.filter(id=a_id).update(status=True)
+    return JsonResponse({'bool': True})
+
+
+# Edit Profile
+def edit_profile(request):
+    msg = None
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            msg = 'Data has been saved'
+    form = ProfileForm(instance=request.user)
+    return render(request, 'user/edit-profile.html', {'form': form, 'msg': msg})
+
+
+# Update addressbook
+def update_address(request, id):
+    address = UserAddressBook.objects.get(pk=id)
+    msg = None
+    if request.method == 'POST':
+        form = AddressBookForm(request.POST, instance=address)
+        if form.is_valid():
+            saveForm = form.save(commit=False)
+            saveForm.user = request.user
+            if 'status' in request.POST:
+                UserAddressBook.objects.update(status=False)
+            saveForm.save()
+            msg = 'Data has been saved'
+    form = AddressBookForm(instance=address)
+    return render(request, 'user/update-address.html', {'form': form, 'msg': msg})
+
+
+def add_wishlist(request):
+    pid = request.GET['product']
+    product = Product.objects.get(pk=pid)
+    data = {}
+    checkw = Wishlist.objects.filter(product=product, user=request.user).count()
+    if checkw > 0:
+        data = {
+            'bool': False
+        }
+    else:
+        wishlist = Wishlist.objects.create(
+            product=product,
+            user=request.user
+        )
+        data = {
+            'bool': True
+        }
+    return JsonResponse(data)
