@@ -136,3 +136,12 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 PAYPAL_RECEIVER_EMAIL = 'sb-zja1726895957@personal.example.com'
 PAYPAL_TEST = True
+
+# SMTP
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'bestnnt2001@gmail.com'
+EMAIL_HOST_PASSWORD = 'yfruveyfpiviniho'

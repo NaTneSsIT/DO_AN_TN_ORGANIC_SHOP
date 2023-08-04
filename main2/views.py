@@ -5,7 +5,7 @@ from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-
+from django.core import serializers
 from .models import Category, Brand, Product, Size, ProductAttribute, CartOrder, CartOrderItems, UserAddressBook, \
     ProductReview, Wishlist
 from main2.forms import SignupForm, ReviewAdd, ProfileForm, AddressBookForm
@@ -13,12 +13,15 @@ from django.urls import reverse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.forms import PayPalPaymentsForm
+from django.core.mail import EmailMessage, send_mail, send_mass_mail
 
 
 # Create your views here.
 def home(request):
     data = Product.objects.filter(is_special=True).order_by('-id')
-    return render(request, 'index.html', {'data': data})
+    cate = Category.objects.all()
+    brand = Brand.objects.all()
+    return render(request, 'index.html', {'data': data, 'cate':cate, 'brand':brand })
 
 
 def categories_list(request):
@@ -239,6 +242,7 @@ def checkout(request):
         form = PayPalPaymentsForm(initial=paypal_dict)
         address = UserAddressBook.objects.filter(user=request.user, status=True).first()
         request.session['order_id'] = order.id
+        request.session['order_amount'] = order.total_amt
         return render(request, 'checkout.html',
                       {'cart_data': request.session['cartdata'], 'totalitems': len(request.session['cartdata']),
                        'total_amt': total_amt, 'form': form, 'address': address})
@@ -246,23 +250,17 @@ def checkout(request):
 
 @csrf_exempt
 def payment_done(request):
-    # total_amt = 0
-    # totalAmt = 0
-    order = request.session['order_id']
-    order = CartOrder.objects.filter(id=order).update(paid_status=True)
-    # # End
-    # for p_id, item in request.session['cartdata'].items():
-    #     total_amt += int(item['qty']) * float(item['price'])
-    #     # OrderItems
-    #     CartOrderItems.objects.create(
-    #         order=order,
-    #         invoice_no='INV-' + str(order.id),
-    #         item=item['title'],
-    #         image=item['image'],
-    #         qty=item['qty'],
-    #         price=item['price'],
-    #         total=float(item['qty']) * float(item['price'])
-    #     )
+    order_id = request.session['order_id']
+    order_am = request.session['order_amount']
+    if 'cartdata' in request.session:
+        request.session['cartdata'] = {}
+    t = render_to_string('email.html', {'order_id': order_id,'order_am':order_am, 'user': request.user})
+    email_order = request.user.email
+    order = CartOrder.objects.filter(id=order_id).update(paid_status=True)
+    email = EmailMessage('Thank for shopping in ORGANIC SHOP', t, settings.EMAIL_HOST_USER, [email_order])
+    email.content_subtype = 'html'
+    email.fail_silently = False
+    email.send()
     returnData = request.POST
     user = request.user
 

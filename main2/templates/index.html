@@ -54,4 +54,38 @@
 	</div>
 	<p class="my-4 text-center"><a href="{% url 'products-list' %}" class="btn btn-dark btn-sm">All Products <i class="fa fa-long-arrow-alt-right"></i></a></p>
 </main>
+        <main class="container my-4">
+    <h3 class="my-4 border-bottom pb-1">ALL BRAND</h3>
+    <section id="slideshow">
+			<div class="entire-content">
+				<div class="content-carrousel">
+            {% for brand in brand %}
+                <figure class="shadow"><a href="/brands-products-list/{{ brand.id }}"><img src="/media/{{ brand.image }}"/></a></figure>
+            {% endfor %}
+		</div>
+	</div>
+</section>
+    </main>
+    <main class="container my-4">
+	<!-- Featured Products -->
+	<h3 class="my-4 border-bottom pb-1">CATEGORY</h3>
+	<div class="row">
+        {% if cate %}
+            {% for cate in cate %}
+                <div class="col-md-6 mb-5">
+                    <div class="card shadow">
+                      <a href="/categories-products-list/{{ cate.id }}"><img src="/media/{{ cate.image }}" width="250" height="250" class="card-img-top" alt="{{ cate.category_name }}"></a>
+                      <div class="card-body">
+                        <h6 class="card-text"><a href="/categories-products-list/{{ cate.id }}">{{ cate.category_name }} </a></h6>
+                      </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+	</div>
+	<p class="my-4 text-center"><a href="{% url 'products-list' %}" class="btn btn-dark btn-sm">All Products <i class="fa fa-long-arrow-alt-right"></i></a></p>
+</main>
+
+
+
 {% endblock %}

@@ -18,6 +18,7 @@ urlpatterns = [
     path('add-to-cart',views.add_to_cart,name='add_to_cart'),
     path('cart',views.cart_list,name='cart'),
     path('delete-from-cart',views.delete_cart_item,name='delete-from-cart'),
+    # path('delete-all-cart',views.delete_all_cart_item,name='delete-all-cart'),
     path('update-cart',views.update_cart_item,name='update-cart'),
     path('accounts/signup',views.signup,name='signup'),
     path('checkout',views.checkout,name='checkout'),
@@ -36,4 +37,5 @@ urlpatterns = [
     path('activate-address', views.activate_address, name='activate-address'),
     path('update-address/<int:id>', views.update_address, name='update-address'),
     path('edit-profile', views.edit_profile, name='edit-profile'),
+    # path('send-mail', views.send_mail1, name='eseeee-profile'),
 ]

@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<main class="container my-4" id="cartList">
-    {{ order }}
-    <p>Dit me may {{ user }}</p>
+<main class="container my-4" id="cartList" onload="loadSC()">
     <p>Payment Success</p>
+    <a href="{% url 'home' %}">Back Home Page</a>
 </main>
+
 {% endblock %}
+

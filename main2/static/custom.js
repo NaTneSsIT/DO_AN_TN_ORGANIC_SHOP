@@ -128,7 +128,24 @@ $(document).ready(function(){
 		});
 		// End
 	});
-
+	// $(document).on('click','.delete-all-item',function(){
+	// 	var _vm=$(this);
+	// 	// Ajax
+	// 	$.ajax({
+	// 		url:'/delete-all-cart',
+	// 		data:{},
+	// 		dataType:'json',
+	// 		beforeSend:function(){
+	// 			_vm.attr('disabled',true);
+	// 		},
+	// 		success:function(res){
+	// 			$(".cart-list").text(res.totalitems);
+	// 			_vm.attr('disabled',false);
+	// 			$("#cartList").html(res.data);
+	// 		}
+	// 	});
+		// End
+	// });
 	// Update item from cart
 	$(document).on('click','.update-item',function(){
 		var _pId=$(this).attr('data-item');

@@ -4,7 +4,8 @@
 <main class="container my-4" id="cartList">
 	<!-- Featured Products -->
 	<h3 class="my-4 border-bottom pb-1">Cart ({{totalitems}})</h3>
-	<table class="table table-bordered">
+	<div>
+        <table class="table table-bordered">
 		<thead>
 			<tr>
 				<th>Product</th>
@@ -25,8 +26,8 @@
 					<button class="btn btn-sm btn-primary update-item" data-item="{{product_id}}"><i class="fa fa-sync"></i></button>
 					<button class="btn btn-sm btn-danger delete-item" data-item="{{product_id}}"><i class="fa fa-trash"></i></button>
 				</td>
-				<td>{{item.price}} VND </td>
-				<td>{% widthratio item.price 1 item.qty %} VND</td>
+				<td>$ {{item.price}} </td>
+				<td>$ {% widthratio item.price 1 item.qty %} </td>
 			</tr>
 			{% endfor %}
 		</tbody>
@@ -34,7 +35,7 @@
 			<tr>
 				<td colspan="2"></td>
 				<th>Total</th>
-				<th>{{total_amt}} VND</th>
+				<th>$ {{total_amt}}</th>
 			</tr>
 			{% if totalitems %}
 			<tr>
@@ -45,5 +46,6 @@
 			{% endif %}
 		</tfoot>
 	</table>
+    </div>
 </main>
 {% endblock %}

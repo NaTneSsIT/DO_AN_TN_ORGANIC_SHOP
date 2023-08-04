@@ -3,9 +3,6 @@
 	<!-- Featured Products -->
 	<h3 class="my-4 border-bottom pb-1">Brands</h3>
 	<div class="row">
-		<?php
-		for($i=1; $i<=2; $i++){
-		?>
 		<div class="col-md-3 mb-4">
 			<div class="card shadow">
 			  <a href="#"><img src="<?php echo $baseUrl; ?>/images/brands/<?php echo $i; ?>.jpg" class="card-img-top" alt="..."></a>
