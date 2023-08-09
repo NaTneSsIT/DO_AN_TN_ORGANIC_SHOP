@@ -137,9 +137,8 @@
 </head>
 <body>
 	<nav id="navbar_top" class="navbar navbar-expand-lg navbar-dark bg-success">
-    <button class="btn btn-sm btn-danger delete-all-item" ><i class="fa fa-trash"></i></button>
 		<div class="container">
-		  <a class="navbar-brand" href="{% url 'home' %}">Organic Shop</a>
+		  <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static "media/images/banners/favpng_organic-food-logo-brand.png" %}" width="80" height="80" class="d-block w-100" alt="..."></a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 		    <span class="navbar-toggler-icon"></span>
 		  </button>
@@ -152,26 +151,26 @@
 				  </div>
 				</div>
 		    </form>
-		    <ul class="navbar-nav ml-auto">
+		    <ul class="navbar-nav ml-auto" >
 		      <li class="nav-item">
-		        <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
+		        <a class="nav-link text-white" style="font-size: 20px" href="{% url 'home' %}">Home</a>
 		      </li>
                 <li class="nav-item">
-		        <a class="nav-link text-white" href="{% url 'products-list' %}">Shop</a>
+		        <a class="nav-link text-white" style="font-size: 20px" href="{% url 'products-list' %}">Shop</a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link text-white" href="{% url 'categories-list' %}">Categories</a>
+		        <a class="nav-link text-white"  style="font-size: 20px" href="{% url 'categories-list' %}">Categories</a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link text-white" href="{% url 'brands-list' %}">Brands</a>
+		        <a class="nav-link text-white" style="font-size: 20px" href="{% url 'brands-list' %}">Brands</a>
 		      </li>
 		      <li class="nav-item">
-		        <a class="nav-link text-white" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i>  Cart (<span class="cart-list">{{request.session.cartdata|length}}</span>)</a>
+		        <a class="nav-link text-white" style="font-size:20px" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i>  Cart (<span class="cart-list">{{request.session.cartdata|length}}</span>)</a>
 		      </li>
 		      <li class="nav-item dropdown">
-		        <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		        <a class="nav-link text-white dropdown-toggle" style="font-size:20px" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		             {% if user.is_authenticated %}
-                    <i class="fa fa-user"></i> {{ user }}
+                    <i class="fa fa-user" ></i>{{ user }}
                     {% else %}
                          <i class="fa fa-user"></i> Account
                     {% endif %}

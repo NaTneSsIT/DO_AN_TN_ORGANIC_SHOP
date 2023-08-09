@@ -83,6 +83,9 @@ $(document).ready(function(){
 		var _productImage=$(".product-image-"+_index).val();
 		var _productTitle=$(".product-title-"+_index).val();
 		var _productPrice=$(".product-price-"+_index).text();
+		var _productAttribute=$(".product-attribute-"+_index).val();
+		console.log(_productAttribute)
+		console.log(_productTitle)
 		// Ajax
 		$.ajax({
 			url:'/add-to-cart',
@@ -91,7 +94,8 @@ $(document).ready(function(){
 				'image':_productImage,
 				'qty':_qty,
 				'title':_productTitle,
-				'price':_productPrice
+				'price':_productPrice,
+				'attribute':_productAttribute,
 			},
 			dataType:'json',
 			beforeSend:function(){

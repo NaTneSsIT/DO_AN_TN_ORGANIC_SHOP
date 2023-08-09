@@ -19,7 +19,7 @@
 			<tr>
 				<td>
 					<img src="/media/{{item.image}}" width="50" />
-					<p><a href="/product/{{item.title|slugify}}/{{product_id}}">{{item.title}}</a></p>
+					<p><a href="/product/{{item.title|slugify}}/{{product_id}}">{{item.title}} - {{ item.attribute }}</a></p>
 				</td>
 				<td>
 					<input type="number" class="product-qty-{{product_id}}" value="{{item.qty}}" style="vertical-align: bottom;" />

@@ -32,7 +32,7 @@ admin.site.register(Product, ProductAdmin)
 
 
 class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ('id', "product", "price", "size")
+    list_display = ('id', "product", "price", "size", "qty")
 
 
 admin.site.register(ProductAttribute, ProductAttributeAdmin)

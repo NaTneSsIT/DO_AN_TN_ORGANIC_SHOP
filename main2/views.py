@@ -21,7 +21,7 @@ def home(request):
     data = Product.objects.filter(is_special=True).order_by('-id')
     cate = Category.objects.all()
     brand = Brand.objects.all()
-    return render(request, 'index.html', {'data': data, 'cate':cate, 'brand':brand })
+    return render(request, 'index.html', {'data': data, 'cate': cate, 'brand': brand})
 
 
 def categories_list(request):
@@ -36,7 +36,7 @@ def brands_list(request):
 
 def products_list(request):
     total_data = Product.objects.count()
-    data = Product.objects.all().order_by('-id')[:3]
+    data = Product.objects.all().order_by('-id')[:6]
     min_price = ProductAttribute.objects.aggregate(Min('price'))
     max_price = ProductAttribute.objects.aggregate(Max('price'))
     return render(request, 'products.html',
@@ -60,6 +60,7 @@ def brand_product_list(request, brand_id):
 
 def product_detail(request, slug, id):
     product = Product.objects.get(id=id)
+    attribute = ProductAttribute.objects.filter(product = product)
     related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
     sizes = ProductAttribute.objects.filter(product=product).values('size_id', 'size__size_name', 'price').distinct()
     reviewForm = ReviewAdd()
@@ -81,7 +82,7 @@ def product_detail(request, slug, id):
     # End
 
     return render(request, 'product_detail.html',
-                  {'data': product, 'related': related_products, 'sizes': sizes, 'reviewForm': reviewForm,
+                  {'data': product,'attribute':attribute, 'related': related_products, 'sizes': sizes, 'reviewForm': reviewForm,
                    'canAdd': canAdd, 'reviews': reviews, 'avg_reviews': avg_reviews})
 
 
@@ -111,7 +112,7 @@ def filter_data(request):
 
 
 def load_more_data(request):
-    offset = int(request.GET['offset']) + 3
+    offset = int(request.GET['offset']) + 6
     limit = int(request.GET['limit'])
     data = Product.objects.all().order_by('-id')[offset:offset + limit]
     t = render_to_string('ajax/product-list.html', {'data': data})
@@ -121,16 +122,18 @@ def load_more_data(request):
 def add_to_cart(request):
     # del request.session['cartdata']
     cart_p = {}
-    cart_p[str(request.GET['id'])] = {
+    attribute = ProductAttribute.objects.get(product_id = request.GET['id'], price=request.GET['price'])
+    cart_p[str(request.GET['id'])+str(attribute.size.size_name)] = {
         'image': request.GET['image'],
         'title': request.GET['title'],
         'qty': request.GET['qty'],
         'price': request.GET['price'],
+        'attribute': attribute.size.size_name,
     }
     if 'cartdata' in request.session:
-        if str(request.GET['id']) in request.session['cartdata']:
+        if str(str(request.GET['id'])+str(attribute.size.size_name)) in request.session['cartdata']:
             cart_data = request.session['cartdata']
-            cart_data[str(request.GET['id'])]['qty'] = int(cart_p[str(request.GET['id'])]['qty'])
+            cart_data[str(request.GET['id'])+str(attribute.size.size_name)]['qty'] = int(cart_p[str(request.GET['id'])+str(attribute.size.size_name)]['qty'])
             cart_data.update(cart_data)
             request.session['cartdata'] = cart_data
         else:
@@ -252,11 +255,17 @@ def checkout(request):
 def payment_done(request):
     order_id = request.session['order_id']
     order_am = request.session['order_amount']
+    t = render_to_string('email.html', {'order_id': order_id, 'order_am': order_am, 'user': request.user, 'cart_data': request.session['cartdata']})
     if 'cartdata' in request.session:
         request.session['cartdata'] = {}
-    t = render_to_string('email.html', {'order_id': order_id,'order_am':order_am, 'user': request.user})
     email_order = request.user.email
     order = CartOrder.objects.filter(id=order_id).update(paid_status=True)
+    order_item = CartOrderItems.objects.filter(order_id=order_id)
+    for item in order_item:
+        attr = ProductAttribute.objects.filter(product__product_name=item.item, price=item.price)
+        for at in attr:
+            at.qty -= item.qty
+            at.save()
     email = EmailMessage('Thank for shopping in ORGANIC SHOP', t, settings.EMAIL_HOST_USER, [email_order])
     email.content_subtype = 'html'
     email.fail_silently = False
