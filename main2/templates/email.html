@@ -8,26 +8,30 @@
     <title>Document</title>
 </head>
 <body>
-Hi {{ user }}. Thank for purschasing ${{ order_am }}
-<h1>Hope you have a great shopping experience in Organic Shop</h1>
-<img src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/98d25f55899921.5997acd85feb8.jpg" height="150" align="center">
-<table>
+<div>
+    <h1 align="center">Hi {{ user }}. Thank for purschasing ${{ order_am }}</h1>
+<h4 align="center">Hope you have a great shopping experience in Organic Shop</h4>
+<h3 align="center">Your Bill </h3>
+<table class="table table-bordered" align="center">
+<tr>
+    <th colspan="4">
+        <img src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/98d25f55899921.5997acd85feb8.jpg" height="150">
+    </th>
+</tr>
     <tr>
-        <th>NAME</th>
-        <th>QTY</th>
-        <th>PRICE</th>
-        <th>TOTAL</th>
+        <th width="650" align="center">NAME</th>
+        <th width="150" align="center">QTY</th>
+        <th width="150" align="center">PRICE</th>
+        <th width="150" align="center">TOTAL</th>
     </tr>
 			{% for product_id,item in cart_data.items %}
 			<tr>
-				<td>
+				<td width="650" align="center">
 					<p>{{item.title}} - {{ item.attribute }}</p>
 				</td>
-				<td>
-					<input type="number" class="product-qty-{{product_id}}" value="{{item.qty}}" style="vertical-align: bottom;" />
-				</td>
-				<td>$ {{item.price}} </td>
-				<td>$ {% widthratio item.price 1 item.qty %} </td>
+				<td width="150" align="center">{{item.qty}}</td>
+				<td width="150" align="center">$ {{item.price}} </td>
+				<td width="150" align="center">$ {% widthratio item.price 1 item.qty %} </td>
 			</tr>
 			{% endfor %}
         <tr>
@@ -36,5 +40,7 @@ Hi {{ user }}. Thank for purschasing ${{ order_am }}
 				<th>$ {{order_am}}</th>
 			</tr>
 </table>
+</div>
+
 </body>
 </html>
