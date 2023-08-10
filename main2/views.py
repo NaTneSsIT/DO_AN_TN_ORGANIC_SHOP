@@ -255,10 +255,12 @@ def checkout(request):
 def payment_done(request):
     order_id = request.session['order_id']
     order_am = request.session['order_amount']
-    t = render_to_string('email.html', {'order_id': order_id, 'order_am': order_am, 'user': request.user, 'cart_data': request.session['cartdata']})
+    user_add = UserAddressBook.objects.filter(user=request.user, status=True)
+    t = render_to_string('email.html', {'user_add':user_add[0].address,'user_phone':user_add[0].mobile, 'order_id': order_id, 'order_am': order_am, 'user': request.user, 'cart_data': request.session['cartdata']})
     if 'cartdata' in request.session:
         request.session['cartdata'] = {}
     email_order = request.user.email
+
     order = CartOrder.objects.filter(id=order_id).update(paid_status=True)
     order_item = CartOrderItems.objects.filter(order_id=order_id)
     for item in order_item:

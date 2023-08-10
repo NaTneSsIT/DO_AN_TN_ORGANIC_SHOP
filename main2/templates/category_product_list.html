@@ -4,10 +4,7 @@
 <main class="container my-4">
 	<div class="row">
 		<!-- Filters -->
-		<div class="col-md-3">
-			{% include 'filter.html' %}
-		</div>
-		<div class="col-md-9">
+		<div class="col-md-12">
 			<!-- Products -->
         {% if cate %}
 			<h3 class="mb-4 border-bottom pb-1">
@@ -16,7 +13,7 @@
         {% endif %}
 			<div class="row">
 				{% for product in data %}
-				<div class="col-md-4 mb-4">
+				<div class="col-md-3 mb-3">
 					<div class="card shadow">
 					  <a href="/product/{{product.slug}}/{{product.id}}"><img src="/media/{{ product.image }}" width="250" height="250" class="card-img-top" alt="{{ product.product_name }}"></a>
 					  <div class="card-body">
@@ -40,8 +37,9 @@
 				</div>
 				{% endfor %}
 			</div>
+         <p class="my-4 text-center"><button id="loadMore" data-total="{{total_data}}" data-limit="3" class="btn btn-dark btn-sm">Load More <i class="fa fa-sync load-more-icon"></i></button></p>
                 </div>
-			<p class="my-4 text-center"><a href="/products.php" class="btn btn-dark btn-sm">Load More <i class="fa fa-sync"></i></a></p>
+
 		</div>
 	</div>
 </div>
