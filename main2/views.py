@@ -261,7 +261,7 @@ def payment_done(request):
         request.session['cartdata'] = {}
     email_order = request.user.email
 
-    order = CartOrder.objects.filter(id=order_id).update(paid_status=True)
+    order = CartOrder.objects.filter(id=order_id).update(paid_status=True, order_status='Ready to ship')
     order_item = CartOrderItems.objects.filter(order_id=order_id)
     for item in order_item:
         attr = ProductAttribute.objects.filter(product__product_name=item.item, price=item.price)
