@@ -134,7 +134,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
-PAYPAL_RECEIVER_EMAIL = ''
+PAYPAL_RECEIVER_EMAIL = 'sb-zja1726895957@personal.example.com'
 PAYPAL_TEST = True
 
 # SMTP
@@ -143,5 +143,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'bestnnt2001@gmail.com'
+EMAIL_HOST_PASSWORD = 'yfruveyfpiviniho'
