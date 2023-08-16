@@ -60,7 +60,7 @@ def brand_product_list(request, brand_id):
 
 def product_detail(request, slug, id):
     product = Product.objects.get(id=id)
-    attribute = ProductAttribute.objects.filter(product = product)
+    attribute = ProductAttribute.objects.filter(product=product)
     related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
     sizes = ProductAttribute.objects.filter(product=product).values('size_id', 'size__size_name', 'price').distinct()
     reviewForm = ReviewAdd()
@@ -82,7 +82,8 @@ def product_detail(request, slug, id):
     # End
 
     return render(request, 'product_detail.html',
-                  {'data': product,'attribute':attribute, 'related': related_products, 'sizes': sizes, 'reviewForm': reviewForm,
+                  {'data': product, 'attribute': attribute, 'related': related_products, 'sizes': sizes,
+                   'reviewForm': reviewForm,
                    'canAdd': canAdd, 'reviews': reviews, 'avg_reviews': avg_reviews})
 
 
@@ -122,8 +123,8 @@ def load_more_data(request):
 def add_to_cart(request):
     # del request.session['cartdata']
     cart_p = {}
-    attribute = ProductAttribute.objects.get(product_id = request.GET['id'], price=request.GET['price'])
-    cart_p[str(request.GET['id'])+str(attribute.size.size_name)] = {
+    attribute = ProductAttribute.objects.get(product_id=request.GET['id'], price=request.GET['price'])
+    cart_p[str(request.GET['id']) + str(attribute.size.size_name)] = {
         'image': request.GET['image'],
         'title': request.GET['title'],
         'qty': request.GET['qty'],
@@ -131,9 +132,10 @@ def add_to_cart(request):
         'attribute': attribute.size.size_name,
     }
     if 'cartdata' in request.session:
-        if str(str(request.GET['id'])+str(attribute.size.size_name)) in request.session['cartdata']:
+        if str(str(request.GET['id']) + str(attribute.size.size_name)) in request.session['cartdata']:
             cart_data = request.session['cartdata']
-            cart_data[str(request.GET['id'])+str(attribute.size.size_name)]['qty'] = int(cart_p[str(request.GET['id'])+str(attribute.size.size_name)]['qty'])
+            cart_data[str(request.GET['id']) + str(attribute.size.size_name)]['qty'] = int(
+                cart_p[str(request.GET['id']) + str(attribute.size.size_name)]['qty'])
             cart_data.update(cart_data)
             request.session['cartdata'] = cart_data
         else:
@@ -256,7 +258,9 @@ def payment_done(request):
     order_id = request.session['order_id']
     order_am = request.session['order_amount']
     user_add = UserAddressBook.objects.filter(user=request.user, status=True)
-    t = render_to_string('email.html', {'user_add':user_add[0].address,'user_phone':user_add[0].mobile, 'order_id': order_id, 'order_am': order_am, 'user': request.user, 'cart_data': request.session['cartdata']})
+    t = render_to_string('email.html',
+                         {'user_add': user_add[0].address, 'user_phone': user_add[0].mobile, 'order_id': order_id,
+                          'order_am': order_am, 'user': request.user, 'cart_data': request.session['cartdata']})
     if 'cartdata' in request.session:
         request.session['cartdata'] = {}
     email_order = request.user.email
@@ -420,3 +424,20 @@ def add_wishlist(request):
             'bool': True
         }
     return JsonResponse(data)
+
+
+def cancel_order(request):
+    order_id = request.GET['order_id']
+    od = CartOrder.objects.filter(id=order_id)
+    if od[0].order_status != "Waiting Payment":
+        order_item = CartOrderItems.objects.filter(order_id=order_id)
+        for item in order_item:
+            attr = ProductAttribute.objects.filter(product__product_name=item.item, price=item.price)
+            for at in attr:
+                at.qty += item.qty
+                at.save()
+    order = CartOrder.objects.filter(id=order_id).update(order_status='Cancel')
+    return JsonResponse({"order":order}, status=200)
+
+def send_mail1(request):
+    return render(request, 'email.html')

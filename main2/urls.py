@@ -37,5 +37,7 @@ urlpatterns = [
     path('activate-address', views.activate_address, name='activate-address'),
     path('update-address/<int:id>', views.update_address, name='update-address'),
     path('edit-profile', views.edit_profile, name='edit-profile'),
+    path('cancel-order', views.cancel_order, name='cancel-order'),
+    # path('admin/email', views.send_mail1, name='cancel-test'),
     # path('send-mail', views.send_mail1, name='eseeee-profile'),
 ]

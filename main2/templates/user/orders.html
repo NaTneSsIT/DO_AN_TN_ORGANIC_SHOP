@@ -18,6 +18,7 @@
                             <th>Paid</th>
 							<th>Status</th>
 							<th>Order Time</th>
+                            <th>Cancel</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -28,6 +29,11 @@
                             <td>{{order.paid_status}}</td>
 							<td>{{order.order_status}}</td>
 							<td>{{order.order_dt}}</td>
+                        {% if order.order_status != 'Complete' and order.order_status != 'Cancel'  %}
+                           <td> <button class="btn btn-sm btn-danger cancel-order" data-order="{{order.id}}"><i class="fa fa-trash"></i></button></td>
+                            {% else %}
+                            <td></td>
+                        {% endif %}
 						</tr>
 						{% endfor %}
 					</tbody>

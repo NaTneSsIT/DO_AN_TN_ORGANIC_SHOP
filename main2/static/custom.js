@@ -270,3 +270,24 @@ $("#addForm").submit(function(e){
 	e.preventDefault();
 });
 // End
+//cancel_order
+$(document).on('click','.cancel-order',function(){
+		var _pId=$(this).attr('data-order');
+		var _vm=$(this);
+		console.log(_pId)
+		// Ajax
+		$.ajax({
+			url:'/cancel-order',
+			data:{
+				'order_id':_pId,
+			},
+			dataType:'json',
+			beforeSend:function(){
+				_vm.attr('disabled',true);
+			},
+			success:function(res){
+				$(".cancel-order").hide();
+				location.reload()
+			}
+		});
+});

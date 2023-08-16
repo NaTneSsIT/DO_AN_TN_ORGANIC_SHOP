@@ -61,7 +61,8 @@ status_choice=(
         ('Waiting Payment','waiting'),
         ('Ready to ship','ready'),
         ('Shipped','shipped'),
-        ('Complete','complete'),)
+        ('Complete','complete'),
+        ('Cancel','cancel'),)
 class CartOrder(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     total_amt=models.FloatField()
@@ -82,7 +83,7 @@ class CartOrderItems(models.Model):
     total=models.FloatField()
 
     class Meta:
-        verbose_name_plural='9. Order Items'
+        verbose_name_plural='Order Items'
 
     def image_tag(self):
         return mark_safe('<img src="/media/%s" width="50" height="50" />' % (self.image))
