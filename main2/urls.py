@@ -38,6 +38,9 @@ urlpatterns = [
     path('update-address/<int:id>', views.update_address, name='update-address'),
     path('edit-profile', views.edit_profile, name='edit-profile'),
     path('cancel-order', views.cancel_order, name='cancel-order'),
+    path('statical', views.statical, name='statical-order'),
+    path('statical1', views.statical1, name='statical1-order'),
     # path('admin/email', views.send_mail1, name='cancel-test'),
     # path('send-mail', views.send_mail1, name='eseeee-profile'),
+
 ]

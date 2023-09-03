@@ -291,3 +291,25 @@ $(document).on('click','.cancel-order',function(){
 			}
 		});
 });
+$(document).on('click','.statical-1',function(){
+		var _start=$('#start_date').val();
+		var _end=$('#end_date').val();
+		var _vm=$(this);
+		console.log(_start)
+		console.log(_end)
+		// Ajax
+		$.ajax({
+			url:'/statical1',
+			data:{
+				'start_date':_start,
+				'end_date':_end,
+			},
+			dataType:'json',
+			beforeSend:function(){
+				_vm.attr('disabled',true);
+				window.location.href = "http://127.0.0.1:8000/statical1?start_date="+_start+"&end_date="+_end;
+			},
+			success:function(res){
+			}
+		});
+});

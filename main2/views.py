@@ -14,7 +14,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.forms import PayPalPaymentsForm
 from django.core.mail import EmailMessage, send_mail, send_mass_mail
-
+from django.forms.models import model_to_dict
 
 # Create your views here.
 def home(request):
@@ -441,3 +441,25 @@ def cancel_order(request):
 
 def send_mail1(request):
     return render(request, 'email.html')
+def statical(request):
+    return render(request, 'statical.html')
+def statical1(request):
+    start_date = '2023-09-08'
+    end_date = '2023-09-09'
+    if request.GET.get('start_date', {}):
+        start_date = request.GET['start_date']
+    if request.GET.get('end_date', {}):
+        end_date = request.GET['end_date']
+    orders = CartOrder.objects.filter(order_dt__range=[start_date, end_date])
+    list_month = list()
+    total = []
+    for order in orders:
+        list_month.append(order.order_dt.month)
+    list_month = list(set(list_month))
+    for month in list_month:
+        total_by_month = 0
+        for order in orders:
+            if order.order_dt.month == month:
+                total_by_month += order.total_amt
+        total.append(total_by_month)
+    return render(request, 'order_report.html', {"month": list_month, "total": total})

@@ -1,0 +1,39 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div>
+  <canvas id="myChart">month</canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+  {% if month %}
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{month}},
+      datasets: [{
+        label: '# Total of Month',
+        data: {{total}},
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  {% endif %}
+</script>
+
+{% endblock %}
+
+
+
+
