@@ -2,14 +2,22 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+    {% if user.is_authenticated %}
+    {% if user.username == "sly" %}
 <div align="center">
+    <h1>ORDER REPORT</h1>
     <label>
-        <input type="date" id="start_date" />
-    </label> - <label>
+       Start date: <input type="date" id="start_date" />
+    </label> - <label> End date:
     <input type="date" id="end_date" />
 </label>
-    <button class="btn btn-sm btn-success statical-1"><i class="fa fa-trash"></i></button>
+    <button class="btn btn-sm btn-success statical-1"><i class="fa fa-calculator"></i></button>
 </div>
+        {% else %}
+        <h1 align="center">No permission!</h1>
+    {% endif %}
+
+     {% endif %}
 {% endblock %}
 
 

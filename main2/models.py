@@ -45,6 +45,9 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     status = models.BooleanField(default=True)
     is_special = models.BooleanField(default=False)
+
+    def image_tag(self):
+        return mark_safe(f'<img src={self.image.url} width="50px" height="50px" />')
     def __str__(self):
         return self.product_name
 

@@ -3,6 +3,7 @@
 {% load static %}
 {% block content %}
 <div>
+    <h1 align="center">Order Report</h1>
   <canvas id="myChart">month</canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,7 +17,7 @@
     data: {
       labels: {{month}},
       datasets: [{
-        label: '# Total of Month',
+        label: '# Total of Month ($)',
         data: {{total}},
         borderWidth: 1
       }]

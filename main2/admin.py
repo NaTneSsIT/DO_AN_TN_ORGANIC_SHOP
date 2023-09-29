@@ -24,7 +24,7 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', "product_name", "sku", 'brand', "status", "is_special")
+    list_display = ('id', "product_name", "image_tag", "sku", 'brand', "status", "is_special")
     list_editable = ('status', 'is_special')
 
 

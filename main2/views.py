@@ -442,7 +442,8 @@ def cancel_order(request):
 def send_mail1(request):
     return render(request, 'email.html')
 def statical(request):
-    return render(request, 'statical.html')
+    user = request.user
+    return render(request, 'statical.html', {'user': user})
 def statical1(request):
     start_date = '2023-09-08'
     end_date = '2023-09-09'
