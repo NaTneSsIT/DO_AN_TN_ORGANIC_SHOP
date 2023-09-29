@@ -130,6 +130,7 @@ def add_to_cart(request):
         'qty': request.GET['qty'],
         'price': request.GET['price'],
         'attribute': attribute.size.size_name,
+        'qty_max': attribute.qty
     }
     if 'cartdata' in request.session:
         if str(str(request.GET['id']) + str(attribute.size.size_name)) in request.session['cartdata']:

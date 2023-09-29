@@ -154,9 +154,13 @@ $(document).ready(function(){
 	$(document).on('click','.update-item',function(){
 		var _pId=$(this).attr('data-item');
 		var _pQty=$(".product-qty-"+_pId).val();
+		var _maxQTY=$(this).attr('data-qty-max');
+		console.log(_maxQTY)
+		console.log(_pQty)
 		var _vm=$(this);
 		// Ajax
-		$.ajax({
+		if(parseInt(_maxQTY) >= parseInt(_pQty)){
+			$.ajax({
 			url:'/update-cart',
 			data:{
 				'id':_pId,
@@ -172,6 +176,11 @@ $(document).ready(function(){
 				$("#cartList").html(res.data);
 			}
 		});
+		}
+		else {
+			location.reload();
+		}
+
 		// End
 	});
 

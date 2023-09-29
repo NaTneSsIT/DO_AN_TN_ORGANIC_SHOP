@@ -14,10 +14,11 @@
 				<td>
 					<img src="/media/{{item.image}}" width="50" />
 					<p><a href="/product/{{item.title|slugify}}/{{product_id}}">{{item.title}}</a></p>
+                    <p>{{item.qty_max}} pieces available</p>
 				</td>
 				<td>
-					<input type="number" value="{{item.qty}}" style="vertical-align: bottom;" class="product-qty-{{product_id}}" />
-					<button data-item="{{product_id}}" class="btn btn-sm btn-primary update-item"><i class="fa fa-sync"></i></button>
+					<input type="number" value="{{item.qty}}" style="vertical-align: bottom;" class="product-qty-{{product_id}}" max="100"/>
+					<button data-item="{{product_id}}" data-qty-max="{{item.qty_max}}" class="btn btn-sm btn-primary update-item"><i class="fa fa-sync"></i></button>
 					<button class="btn btn-sm btn-danger delete-item" data-item="{{product_id}}"><i class="fa fa-trash"></i></button>
 				</td>
 				<td>$ {{item.price}}</td>
