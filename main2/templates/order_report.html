@@ -13,14 +13,28 @@
   {% if month %}
 
   new Chart(ctx, {
-    type: 'bar',
+
     data: {
       labels: {{month}},
       datasets: [{
+          type: 'bar',
         label: '# Total of Month ($)',
         data: {{total}},
         borderWidth: 1
-      }]
+      },
+          {
+              type: 'line',
+        label: '# Qty of Month',
+        data: {{qty}},
+        borderWidth: 1
+      },
+                    {
+              type: 'line',
+        label: '# Remaining of Month',
+        data: {{qty_re}},
+        borderWidth: 1
+      },
+      ]
     },
     options: {
       scales: {

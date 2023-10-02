@@ -72,7 +72,8 @@ class CartOrder(models.Model):
     paid_status=models.BooleanField(default=False)
     order_dt=models.DateTimeField(auto_now_add=True)
     order_status=models.CharField(choices=status_choice,default='Waiting Payment',max_length=150)
-
+    qty = models.IntegerField(null=True)
+    qty_remaining = models.IntegerField(null=True)
     class Meta:
         verbose_name_plural='Orders'
 

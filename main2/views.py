@@ -265,14 +265,19 @@ def payment_done(request):
     if 'cartdata' in request.session:
         request.session['cartdata'] = {}
     email_order = request.user.email
-
-    order = CartOrder.objects.filter(id=order_id).update(paid_status=True, order_status='Ready to ship')
     order_item = CartOrderItems.objects.filter(order_id=order_id)
+    total_qty = 0
     for item in order_item:
         attr = ProductAttribute.objects.filter(product__product_name=item.item, price=item.price)
+        total_qty += item.qty
         for at in attr:
             at.qty -= item.qty
             at.save()
+    attributes = ProductAttribute.objects.all()
+    remaining = 0
+    for attribute in attributes:
+        remaining += attribute.qty
+    order = CartOrder.objects.filter(id=order_id).update(paid_status=True, order_status='Ready to ship', qty=total_qty, qty_remaining = remaining)
     email = EmailMessage('Thank for shopping in ORGANIC SHOP', t, settings.EMAIL_HOST_USER, [email_order])
     email.content_subtype = 'html'
     email.fail_silently = False
@@ -455,13 +460,25 @@ def statical1(request):
     orders = CartOrder.objects.filter(order_dt__range=[start_date, end_date])
     list_month = list()
     total = []
+    total_qty = []
     for order in orders:
         list_month.append(order.order_dt.month)
     list_month = list(set(list_month))
     for month in list_month:
         total_by_month = 0
+        qty_by_month = 0
         for order in orders:
-            if order.order_dt.month == month:
+            if order.order_dt.month == month and order.order_status != 'cancel':
                 total_by_month += order.total_amt
+                qty_by_month += order.qty
         total.append(total_by_month)
-    return render(request, 'order_report.html', {"month": list_month, "total": total})
+        total_qty.append(qty_by_month)
+    list_remaining = []
+    for index, month in enumerate(list_month):
+        list_remaining_month = []
+        for order in orders:
+            if order.order_dt.month == month and order.order_status != 'cancel':
+                list_remaining_month.append(order.qty_remaining)
+        # list_month[index] = str(list_month[index]) + '(' + str(list_remaining_month[-1]) + ')'
+        list_remaining.append(list_remaining_month[-1])
+    return render(request, 'order_report.html', {"month": list_month, "total": total, "qty": total_qty, "qty_re": list_remaining})
